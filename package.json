@@ -1,0 +1,11 @@
+{
+  "name": "tupian-server",
+  "version": "1.0.0",
+  "description": "本地图片字幕生成器服务器",
+  "scripts": {
+    "start": "npx http-server -c-1 -p 8080 ."
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
