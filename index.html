@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golden Chrome - 网页金句导出插件演示</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="content.css">
+  <style>
+    /* 演示页面特有样式 */
+    body {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .demo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .demo-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .demo-header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      border-bottom: none;
+    }
+    
+    .demo-header p {
+      color: #666;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .demo-section {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #fff;
+    }
+    
+    .demo-section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .demo-content {
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .demo-content p {
+      line-height: 1.8;
+      margin-bottom: 15px;
+    }
+    
+    .demo-instructions {
+      background-color: #f0f7ff;
+      border-left: 4px solid #4a90e2;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .demo-instructions ol {
+      margin-left: 20px;
+      margin-bottom: 0;
+    }
+    
+    .demo-instructions li {
+      margin-bottom: 8px;
+    }
+    
+    .popup-container {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      max-width: 90vw;
+    }
+    
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    
+    .close-popup {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #999;
+    }
+    
+    .close-popup:hover {
+      color: #333;
+    }
+    
+    /* 自定义悬浮按钮位置 */
+    .golden-chrome-selection-button {
+      position: fixed;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1>Golden Chrome - 网页金句导出插件演示</h1>
+      <p>这是一个演示页面，展示了Golden Chrome插件的核心功能。您可以在下方选择文字，然后使用插件功能将其转换为精美图片。</p>
+    </div>
+    
+    <div class="demo-section">
+      <h2>功能演示</h2>
+      
+      <div class="demo-instructions">
+        <h3>使用说明：</h3>
+        <ol>
+          <li>在下方文本中<strong>选择</strong>您喜欢的句子</li>
+          <li>点击出现的<strong>导出金句</strong>按钮</li>
+          <li>在弹出窗口中选择您喜欢的样式</li>
+          <li>点击<strong>生成图片</strong>按钮</li>
+          <li>点击<strong>保存图片</strong>按钮下载</li>
+        </ol>
+      </div>
+      
+      <div class="demo-content">
+        <p>人生就像一场旅行，不必在乎目的地，在乎的是沿途的风景以及看风景的心情。</p>
+        <p>生活不是等待风暴过去，而是学会在雨中翩翩起舞。</p>
+        <p>成功不是将来才有的，而是从决定去做的那一刻起，持续累积而成。</p>
+        <p>不要等待机会，而要创造机会。</p>
+        <p>世界上那些最容易的事情中，拖延时间最不费力。</p>
+        <p>人的一生可能燃烧也可能腐朽，我不能腐朽，我愿意燃烧起来。</p>
+        <p>生活中最重要的不是我们身处何处，而是我们朝着什么方向前进。</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 悬浮操作按钮 -->
+  <div class="golden-chrome-selection-button"><span>导出金句</span></div>
+  
+  <!-- 遮罩层 -->
+  <div class="overlay"></div>
+  
+  <!-- 弹出窗口 -->
+  <div class="popup-container">
+    <button class="close-popup">×</button>
+    <div class="container">
+      <h1>网页金句导出</h1>
+      
+      <div class="input-section">
+        <label for="text-content">输入或粘贴文字内容：</label>
+        <textarea id="text-content" placeholder="在此输入您想要转换成图片的文字..."></textarea>
+        <div class="source-info">
+          <div id="page-title">来源页面：<span>Golden Chrome演示页面</span></div>
+          <div id="page-url">来源链接：<span>本地演示</span></div>
+        </div>
+      </div>
+      
+      <div class="style-section">
+        <h2>选择样式</h2>
+        <div class="style-options">
+          <div class="style-option" data-style="simple-white">
+            <div class="preview simple-white">
+              <span>简约白</span>
+            </div>
+            <p>简约白</p>
+          </div>
+          <div class="style-option" data-style="dark-black">
+            <div class="preview dark-black">
+              <span>暗夜黑</span>
+            </div>
+            <p>暗夜黑</p>
+          </div>
+          <div class="style-option" data-style="gradient-pink">
+            <div class="preview gradient-pink">
+              <span>渐变粉</span>
+            </div>
+            <p>渐变粉</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-section">
+        <button id="generate-btn" class="primary-btn">生成图片</button>
+        <button id="save-btn" class="primary-btn" disabled>保存图片</button>
+      </div>
+      
+      <canvas id="preview-canvas" style="display: none; max-width: 100%; margin-top: 20px;"></canvas>
+    </div>
+  </div>
+
+  <!-- 引入JavaScript文件 -->
+  <script src="content.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

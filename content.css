@@ -1,0 +1,39 @@
+/**
+ * Golden Chrome - 网页金句导出插件
+ * content.css - 内容脚本的样式，主要用于悬浮操作按钮
+ */
+
+/* 悬浮操作按钮样式 */
+.golden-chrome-selection-button {
+  position: absolute;
+  z-index: 9999;
+  background-color: #4a90e2;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  user-select: none;
+  display: none;
+}
+
+.golden-chrome-selection-button:hover {
+  background-color: #3a80d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.golden-chrome-selection-button span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 添加一个小图标 */
+.golden-chrome-selection-button::before {
+  content: "✨";
+  margin-right: 5px;
+  font-size: 12px;
+}
