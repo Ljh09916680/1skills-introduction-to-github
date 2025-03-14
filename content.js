@@ -19,6 +19,19 @@ function initialize() {
   
   // 监听来自popup的消息
   chrome.runtime.onMessage.addListener(handleMessage);
+
+  // 添加关闭弹窗的功能
+  const closeButton = document.querySelector('.close-popup');
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      const popup = document.querySelector('.popup-container');
+      const overlay = document.querySelector('.overlay');
+      if (popup && overlay) {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+      }
+    });
+  }
 }
 
 /**
@@ -99,12 +112,6 @@ function handleMessage(request, sender, sendResponse) {
   // 在演示环境中不需要处理消息
   return true;
 }
-
-// 添加关闭弹窗的功能
-document.querySelector('.close-popup').addEventListener('click', () => {
-  document.querySelector('.popup-container').style.display = 'none';
-  document.querySelector('.overlay').style.display = 'none';
-});
 
 // 初始化内容脚本
 initialize();

@@ -3,59 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Golden Chrome - 网页金句导出插件</title>
+  <title>Golden Chrome - 网页金句导出</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
-    <h1>网页金句导出</h1>
+  <div class="popup-container">
+    <div class="header">
+      <h2>网页金句导出</h2>
+      <button class="close-popup">×</button>
+    </div>
     
-    <div class="input-section">
-      <label for="text-content">输入或粘贴文字内容：</label>
-      <textarea id="text-content" placeholder="在此输入您想要转换成图片的文字..."></textarea>
+    <div class="content">
+      <div class="text-section">
+        <textarea id="text-content" placeholder="在这里输入或粘贴文字内容..."></textarea>
+        <button id="ai-summarize-btn" class="action-btn">AI总结</button>
+      </div>
+      
       <div class="source-info">
         <div id="page-title">来源页面：<span></span></div>
-        <div id="page-url">来源链接：<span></span></div>
+        <div id="page-url">页面链接：<span></span></div>
       </div>
-    </div>
-    
-    <div class="style-section">
-      <h2>选择样式</h2>
-      <div class="style-options">
-        <div class="style-option" data-style="simple-white">
-          <div class="preview simple-white">
+      
+      <div class="style-section">
+        <h3>选择样式</h3>
+        <div class="style-options">
+          <div class="style-option" data-style="simple-white">
+            <div class="preview simple-white"></div>
             <span>简约白</span>
           </div>
-          <p>简约白</p>
-        </div>
-        <div class="style-option" data-style="dark-black">
-          <div class="preview dark-black">
+          <div class="style-option" data-style="dark-black">
+            <div class="preview dark-black"></div>
             <span>暗夜黑</span>
           </div>
-          <p>暗夜黑</p>
-        </div>
-        <div class="style-option" data-style="gradient-pink">
-          <div class="preview gradient-pink">
+          <div class="style-option" data-style="gradient-pink">
+            <div class="preview gradient-pink"></div>
             <span>渐变粉</span>
           </div>
-          <p>渐变粉</p>
         </div>
       </div>
-    </div>
-    
-    <div class="action-section">
-      <button id="generate-btn">生成图片</button>
-      <button id="save-btn" disabled>保存图片</button>
-    </div>
-    
-    <div class="preview-section">
-      <h2>预览</h2>
-      <div id="image-preview">
-        <canvas id="preview-canvas" width="600" height="400"></canvas>
+      
+      <div class="preview-section">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+      
+      <div class="action-buttons">
+        <button id="generate-btn" class="action-btn">生成图片</button>
+        <button id="save-btn" class="action-btn" disabled>保存图片</button>
       </div>
     </div>
   </div>
   
+  <div class="overlay"></div>
   <script src="popup.js"></script>
 </body>
 </html>

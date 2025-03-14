@@ -8,18 +8,22 @@ let selectedStyle = 'simple-white'; // 默认样式
 let generatedImageData = null; // 生成的图片数据
 
 // DOM 元素
-const textContent = document.getElementById('text-content');
-const pageTitle = document.getElementById('page-title').querySelector('span');
-const pageUrl = document.getElementById('page-url').querySelector('span');
-const styleOptions = document.querySelectorAll('.style-option');
-const generateBtn = document.getElementById('generate-btn');
-const saveBtn = document.getElementById('save-btn');
-const previewCanvas = document.getElementById('preview-canvas');
+let textContent, pageTitle, pageUrl, styleOptions, generateBtn, saveBtn, previewCanvas, aiSummarizeBtn;
 
 /**
  * 初始化函数 - 页面加载完成后执行
  */
 document.addEventListener('DOMContentLoaded', () => {
+  // 获取DOM元素
+  textContent = document.getElementById('text-content');
+  pageTitle = document.getElementById('page-title').querySelector('span');
+  pageUrl = document.getElementById('page-url').querySelector('span');
+  styleOptions = document.querySelectorAll('.style-option');
+  generateBtn = document.getElementById('generate-btn');
+  saveBtn = document.getElementById('save-btn');
+  previewCanvas = document.getElementById('preview-canvas');
+  aiSummarizeBtn = document.getElementById('ai-summarize-btn');
+  
   // 设置事件监听器
   setupEventListeners();
 });
@@ -28,6 +32,25 @@ document.addEventListener('DOMContentLoaded', () => {
  * 设置事件监听器
  */
 function setupEventListeners() {
+  // 检查所有必需的DOM元素是否存在
+  if (!textContent || !pageTitle || !pageUrl || !styleOptions || !generateBtn || !saveBtn || !previewCanvas || !aiSummarizeBtn) {
+    console.error('无法找到必需的DOM元素');
+    return;
+  }
+
+  // 关闭按钮事件
+  const closeButton = document.querySelector('.close-popup');
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      const popup = document.querySelector('.popup-container');
+      const overlay = document.querySelector('.overlay');
+      if (popup && overlay) {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+      }
+    });
+  }
+
   // 样式选择事件
   styleOptions.forEach(option => {
     option.addEventListener('click', () => {
@@ -43,13 +66,18 @@ function setupEventListeners() {
   });
   
   // 默认选中第一个样式
-  styleOptions[0].classList.add('active');
+  if (styleOptions.length > 0) {
+    styleOptions[0].classList.add('active');
+  }
   
   // 生成图片按钮点击事件
   generateBtn.addEventListener('click', generateImage);
   
   // 保存图片按钮点击事件
   saveBtn.addEventListener('click', saveImage);
+  
+  // AI总结按钮点击事件
+  aiSummarizeBtn.addEventListener('click', handleAISummarize);
   
   // 文本内容变化事件
   textContent.addEventListener('input', () => {
@@ -60,6 +88,46 @@ function setupEventListeners() {
       previewCanvas.style.display = 'none';
     }
   });
+}
+
+/**
+ * 处理AI总结请求
+ */
+async function handleAISummarize() {
+  const text = textContent.value.trim();
+  
+  if (!text) {
+    alert('请输入要总结的文字内容');
+    return;
+  }
+  
+  // 禁用按钮并显示加载状态
+  aiSummarizeBtn.disabled = true;
+  aiSummarizeBtn.textContent = '正在总结...';
+  
+  try {
+    const response = await fetch('http://localhost:3000/api/summarize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ text })
+    });
+    
+    if (!response.ok) {
+      throw new Error('API请求失败');
+    }
+    
+    const data = await response.json();
+    textContent.value = data.summary;
+  } catch (error) {
+    console.error('AI总结失败:', error);
+    alert('生成总结时出错，请稍后重试');
+  } finally {
+    // 恢复按钮状态
+    aiSummarizeBtn.disabled = false;
+    aiSummarizeBtn.textContent = 'AI总结';
+  }
 }
 
 /**
